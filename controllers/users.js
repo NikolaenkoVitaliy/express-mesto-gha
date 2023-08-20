@@ -73,16 +73,16 @@ const updateUser = (req, res) => {
     )
     .then((user) => {
       if (user === null) {
-        res.status(STATUS_NOT_FOUND).send({ message: "User Not Found" });
+        return res.status(STATUS_NOT_FOUND).send({ message: "User Not Found" });
       }
-      res.status(STATUS_OK).send(user);
+      return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
+        return res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
-      res
+      return res
         .status(STATUS_INTERNAL_SERVER_ERROR)
         .send({ message: "Internal Server Error" });
     });
