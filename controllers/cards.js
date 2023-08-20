@@ -44,14 +44,14 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   console.log(req.params);
-  const cardId = req.params;
+  const cardId = req.params.cardId;
   cardModel
     .findById(cardId)
     .then((card) => {
       if (!card) {
         res.status(STATUS_NOT_FOUND).send({ message: "Card not found" });
       }
-      cardModel.findByIdAndDelete(cardId);
+      return cardModel.findByIdAndDelete(cardId);
     })
     .then(() => {
       res.status(STATUS_OK).send({ message: "Card has been deleted" });
@@ -80,7 +80,7 @@ const setLikeCard = (req, res) => {
       res.status(STATUS_OK).send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === "CastError") {
         res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
@@ -106,7 +106,7 @@ const removeLikeCard = (req, res) => {
       res.status(STATUS_OK).send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === "CastError") {
         res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
