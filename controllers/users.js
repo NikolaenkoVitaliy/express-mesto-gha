@@ -35,7 +35,7 @@ const getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        return res.status(STATUS_BAD_REQUEST).send({ message: "Incorrect ID" });
+        res.status(STATUS_BAD_REQUEST).send({ message: "Incorrect ID" });
       }
       res
         .status(STATUS_INTERNAL_SERVER_ERROR)
@@ -53,7 +53,7 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
+        res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
       res
@@ -66,7 +66,11 @@ const updateUser = (req, res) => {
   const userId = req.user._id;
   const { name, about } = req.body;
   userModel
-    .findByIdAndUpdate(userId, { name, about }, { new: true })
+    .findByIdAndUpdate(
+      userId,
+      { name, about },
+      { new: true, runValidators: true }
+    )
     .then((user) => {
       if (user === null) {
         res.status(STATUS_NOT_FOUND).send({ message: "User Not Found" });
@@ -75,7 +79,7 @@ const updateUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
+        res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
       res
@@ -88,7 +92,7 @@ const updateUserAvatar = (req, res) => {
   const userId = req.user._id;
   const { avatar } = req.body;
   userModel
-    .findByIdAndUpdate(userId, { avatar }, { new: true })
+    .findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (user === null) {
         res.status(STATUS_NOT_FOUND).send({ message: "User Not Found" });
