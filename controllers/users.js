@@ -52,7 +52,7 @@ const createUser = (req, res) => {
       res.status(STATUS_CREATED).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
@@ -74,7 +74,7 @@ const updateUser = (req, res) => {
       res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
@@ -96,7 +96,7 @@ const updateUserAvatar = (req, res) => {
       res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);

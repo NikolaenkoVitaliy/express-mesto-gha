@@ -80,7 +80,7 @@ const setLikeCard = (req, res) => {
       res.status(STATUS_OK).send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
@@ -106,7 +106,7 @@ const removeLikeCard = (req, res) => {
       res.status(STATUS_OK).send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
