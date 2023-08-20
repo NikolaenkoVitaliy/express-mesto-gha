@@ -35,7 +35,7 @@ const getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(STATUS_BAD_REQUEST).send({ message: "Incorrect ID" });
+        return res.status(STATUS_BAD_REQUEST).send({ message: "Incorrect ID" });
       }
       res
         .status(STATUS_INTERNAL_SERVER_ERROR)
@@ -52,8 +52,8 @@ const createUser = (req, res) => {
       res.status(STATUS_CREATED).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
+      if (err.name === "ValidationError") {
+        return res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
       res
@@ -74,8 +74,8 @@ const updateUser = (req, res) => {
       res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
+      if (err.name === "ValidationError") {
+        return res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
       res
@@ -96,7 +96,7 @@ const updateUserAvatar = (req, res) => {
       res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
+      if (err.name === "ValidationError") {
         res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
       }
       console.log(err);
@@ -111,5 +111,5 @@ module.exports = {
   getUserById,
   createUser,
   updateUser,
-  updateUserAvatar
+  updateUserAvatar,
 };
