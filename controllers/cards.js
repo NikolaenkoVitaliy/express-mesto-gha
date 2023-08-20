@@ -49,7 +49,7 @@ const deleteCard = (req, res) => {
     .findById(cardId)
     .then((card) => {
       if (card === null) {
-        res.status(STATUS_BAD_REQUEST).send({ message: "Card not found" });
+        res.status(STATUS_NOT_FOUND).send({ message: "Card not found" });
       }
       return cardModel.findByIdAndDelete(cardId);
     })
@@ -58,6 +58,9 @@ const deleteCard = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      if (err.name === "CastError") {
+        res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
+      }
       res
         .status(STATUS_INTERNAL_SERVER_ERROR)
         .send({ message: "Internal Server Error" });
