@@ -44,7 +44,7 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   console.log(req.params);
-  const { cardId } = req.params.cardId;
+  const { cardId } = req.params;
   cardModel
     .findById(cardId)
     .then((card) => {
