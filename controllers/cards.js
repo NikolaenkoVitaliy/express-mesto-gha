@@ -69,7 +69,7 @@ const deleteCard = (req, res) => {
 
 const setLikeCard = (req, res) => {
   const userId = req.user._id;
-  const { cardId } = req.params.cardId;
+  const { cardId } = req.params;
   cardModel
     .findByIdAndUpdate(
       cardId,
@@ -77,6 +77,7 @@ const setLikeCard = (req, res) => {
       { new: true },
     )
     .then((card) => {
+      console.log(cardId);
       if (!card) {
         return res.status(STATUS_NOT_FOUND).send({ message: 'Card Not Found' });
       }
@@ -95,7 +96,7 @@ const setLikeCard = (req, res) => {
 
 const removeLikeCard = (req, res) => {
   const userId = req.user._id;
-  const { cardId } = req.params.cardId;
+  const { cardId } = req.params;
   cardModel
     .findByIdAndUpdate(
       cardId,
