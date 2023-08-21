@@ -1,50 +1,48 @@
-const userModel = require("../models/user");
+const userModel = require('../models/user');
 const {
   STATUS_OK,
   STATUS_CREATED,
   STATUS_INTERNAL_SERVER_ERROR,
   STATUS_NOT_FOUND,
   STATUS_BAD_REQUEST,
-} = require("../utils/constants");
+} = require('../utils/constants');
 
 const getAllUsers = (req, res) => {
   userModel
     .find({})
     .then((users) => {
       console.log(res);
-      res.status(STATUS_OK).send(users);
+      res.send(users);
     })
     .catch((err) => {
       console.log(err);
       res
         .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+        .send({ message: 'Internal Server Error' });
     });
 };
 
 const getUserById = (req, res) => {
-  console.log(req.params);
   const { userId } = req.params;
   userModel
     .findById(userId)
     .then((user) => {
-      if (user === null) {
-        res.status(STATUS_NOT_FOUND).send({ message: "User Not Found" });
+      if (!user) {
+        return res.status(STATUS_NOT_FOUND).send({ message: 'User Not Found' });
       }
-      res.status(STATUS_OK).send(user);
+      return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(STATUS_BAD_REQUEST).send({ message: "Incorrect ID" });
+      if (err.name === 'CastError') {
+        return res.status(STATUS_BAD_REQUEST).send({ message: 'Incorrect ID' });
       }
-      res
+      return res
         .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+        .send({ message: 'Internal Server Error' });
     });
 };
 
 const createUser = (req, res) => {
-  console.log(req.body);
   const { name, about, avatar } = req.body;
   userModel
     .create({ name, about, avatar })
@@ -52,13 +50,13 @@ const createUser = (req, res) => {
       res.status(STATUS_CREATED).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
+      if (err.name === 'ValidationError') {
+        return res.status(STATUS_BAD_REQUEST).send({ message: 'Invalid Data' });
       }
       console.log(err);
-      res
+      return res
         .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+        .send({ message: 'Internal Server Error' });
     });
 };
 
@@ -69,23 +67,23 @@ const updateUser = (req, res) => {
     .findByIdAndUpdate(
       userId,
       { name, about },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     )
     .then((user) => {
-      if (user === null) {
-        res.status(STATUS_NOT_FOUND).send({ message: "User Not Found" });
+      if (!user) {
+        return res.status(STATUS_NOT_FOUND).send({ message: 'User Not Found' });
       }
-      res.status(STATUS_OK).send(user);
+      return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
       console.log(err.name);
-      if (err.name === "ValidationError") {
-        res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
+      if (err.name === 'ValidationError') {
+        return res.status(STATUS_BAD_REQUEST).send({ message: 'Invalid Data' });
       }
       console.log(err);
-      res
+      return res
         .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+        .send({ message: 'Internal Server Error' });
     });
 };
 
@@ -95,19 +93,19 @@ const updateUserAvatar = (req, res) => {
   userModel
     .findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
-      if (user === null) {
-        res.status(STATUS_NOT_FOUND).send({ message: "User Not Found" });
+      if (!user) {
+        return res.status(STATUS_NOT_FOUND).send({ message: 'User Not Found' });
       }
-      res.status(STATUS_OK).send(user);
+      return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(STATUS_BAD_REQUEST).send({ message: "Invalid Data" });
+      if (err.name === 'ValidationError') {
+        return res.status(STATUS_BAD_REQUEST).send({ message: 'Invalid Data' });
       }
       console.log(err);
-      res
+      return res
         .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+        .send({ message: 'Internal Server Error' });
     });
 };
 
