@@ -45,11 +45,16 @@ const createCard = (req, res) => {
 const deleteCard = (req, res) => {
   console.log(req.params);
   const { cardId } = req.params;
+  const userId = req.user._id;
   cardModel
     .findById(cardId)
     .then((card) => {
+      console.log(card);
       if (!card) {
         return res.status(STATUS_NOT_FOUND).send({ message: 'Card not found' });
+      }
+      if (userId === card.owner.toString()) {
+        return res.send({ message: 'Разрешено удалять только свои карточки' });
       }
       return cardModel.findByIdAndDelete(cardId);
     })
