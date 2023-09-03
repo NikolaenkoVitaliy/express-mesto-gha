@@ -44,7 +44,7 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   console.log(req.params);
-  const { cardId } = req.params;
+  const cardId = req.params;
   const userId = req.user._id;
   cardModel
     .findById(cardId)
@@ -74,11 +74,11 @@ const deleteCard = (req, res) => {
 
 const setLikeCard = (req, res) => {
   const userId = req.user._id;
-  const { cardId } = req.params;
+  const cardId = req.params;
   cardModel
     .findByIdAndUpdate(
       cardId,
-      { $addToSet: { likes: userId } }, // добавить _id в массив, если его там нет
+      { $addToSet: { likes: userId } },
       { new: true },
     )
     .then((card) => {
@@ -101,7 +101,7 @@ const setLikeCard = (req, res) => {
 
 const removeLikeCard = (req, res) => {
   const userId = req.user._id;
-  const { cardId } = req.params;
+  const cardId = req.params;
   cardModel
     .findByIdAndUpdate(
       cardId,

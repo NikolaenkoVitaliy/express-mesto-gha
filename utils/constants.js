@@ -5,6 +5,8 @@ const STATUS_UNAUTHORIZED = 401;
 const STATUS_NOT_FOUND = 404;
 const STATUS_INTERNAL_SERVER_ERROR = 500;
 
+const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
+
 module.exports = {
   STATUS_OK,
   STATUS_CREATED,
@@ -12,4 +14,5 @@ module.exports = {
   STATUS_UNAUTHORIZED,
   STATUS_NOT_FOUND,
   STATUS_INTERNAL_SERVER_ERROR,
+  regex,
 };
