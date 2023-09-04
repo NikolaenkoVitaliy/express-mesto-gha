@@ -5,6 +5,7 @@ const {
   STATUS_INTERNAL_SERVER_ERROR,
   STATUS_NOT_FOUND,
   STATUS_BAD_REQUEST,
+  STATUS_FORBIDDEN,
 } = require('../utils/constants');
 
 const getAllCards = (req, res) => {
@@ -44,7 +45,7 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   console.log(req.params);
-  const cardId = req.params;
+  const { cardId } = req.params;
   const userId = req.user._id;
   cardModel
     .findById(cardId)
@@ -54,7 +55,7 @@ const deleteCard = (req, res) => {
         return res.status(STATUS_NOT_FOUND).send({ message: 'Card not found' });
       }
       if (userId === card.owner.toString()) {
-        return res.send({ message: 'Разрешено удалять только свои карточки' });
+        return res.status(STATUS_FORBIDDEN).send({ message: 'Разрешено удалять только свои карточки' });
       }
       return cardModel.findByIdAndDelete(cardId);
     })
@@ -74,7 +75,7 @@ const deleteCard = (req, res) => {
 
 const setLikeCard = (req, res) => {
   const userId = req.user._id;
-  const cardId = req.params;
+  const { cardId } = req.params;
   cardModel
     .findByIdAndUpdate(
       cardId,
@@ -101,7 +102,7 @@ const setLikeCard = (req, res) => {
 
 const removeLikeCard = (req, res) => {
   const userId = req.user._id;
-  const cardId = req.params;
+  const { cardId } = req.params;
   cardModel
     .findByIdAndUpdate(
       cardId,

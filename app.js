@@ -7,7 +7,7 @@ const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 
-const regexLink = require('./utils/constants');
+const { regexLink } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 
@@ -22,7 +22,7 @@ app.post(
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().required().regex(new RegExp(regexLink)),
+      avatar: Joi.string().regex(regexLink),
       email: Joi.string().required().email(),
       password: Joi.string().required().min(8),
     }),
