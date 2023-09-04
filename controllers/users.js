@@ -52,9 +52,7 @@ const createUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else if (err.code === 11000) {
-        next(
-          new ConflictError('Пользователь с такой электронной почтой уже зарегистрирован'),
-        );
+        next(new ConflictError('Пользователь с такой электронной почтой уже зарегистрирован'));
       } else {
         next(err);
       }
