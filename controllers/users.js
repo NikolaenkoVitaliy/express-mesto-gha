@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
 const { STATUS_OK, STATUS_CREATED } = require('../utils/constants');
 const NotFoundError = require('../errors/not-found-error');
-const ConflictError = require('../errors/conflict-error');
 const BadRequestError = require('../errors/bad-request-error');
+const ConflictError = require('../errors/conflict-error');
 
 const getAllUsers = (req, res, next) => {
   userModel
@@ -51,10 +51,9 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
-      }
-      if (err.code === 11000) {
+      } else if (err.code === 11000) {
         next(
-          new ConflictError('Нет прав доступа для удаления карточек других пользователей'),
+          new ConflictError('Пользователь с такой электронной почтой уже зарегистрирован'),
         );
       } else {
         next(err);

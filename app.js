@@ -8,7 +8,7 @@ const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 
 const { regexLink } = require('./utils/constants');
-const errorHandler = require('./middlewares/errorHandler');
+const { errorHandler } = require('./middlewares/errorHandler');
 
 const { PORT = 3000 } = process.env;
 
