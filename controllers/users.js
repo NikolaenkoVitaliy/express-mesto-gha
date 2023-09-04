@@ -1,59 +1,48 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
-const {
-  STATUS_OK,
-  STATUS_CREATED,
-  STATUS_INTERNAL_SERVER_ERROR,
-  STATUS_NOT_FOUND,
-  STATUS_BAD_REQUEST,
-  STATUS_UNAUTHORIZED,
-  STATUS_CONFLICT,
-} = require('../utils/constants');
+const { STATUS_OK, STATUS_CREATED } = require('../utils/constants');
+const NotFoundError = require('../errors/not-found-error');
+const ConflictError = require('../errors/conflict-error');
+const BadRequestError = require('../errors/bad-request-error');
 
-const getAllUsers = (req, res) => {
+const getAllUsers = (req, res, next) => {
   userModel
     .find({})
     .then((users) => {
-      console.log(res);
       res.send(users);
     })
-    .catch((err) => {
-      console.log(err);
-      res
-        .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: 'Internal Server Error' });
-    });
+    .catch(next);
 };
 
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   const { userId } = req.params;
   userModel
     .findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(STATUS_NOT_FOUND).send({ message: 'User Not Found' });
+        next(new NotFoundError('Пользователь не найден'));
       }
       return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(STATUS_BAD_REQUEST).send({ message: 'Incorrect ID' });
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      return res
-        .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: 'Internal Server Error' });
     });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  console.log(req.body);
-  bcrypt.hash(password, 10).then((hash) => userModel.create({
-    name, about, avatar, email, password: hash,
-  }))
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => userModel.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => {
       const userObject = user.toObject();
       delete userObject.password;
@@ -61,18 +50,19 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(STATUS_BAD_REQUEST).send({ message: 'Invalid Data' });
+        next(new BadRequestError('Переданы некорректные данные'));
       }
       if (err.code === 11000) {
-        return res.status(STATUS_CONFLICT).send({ message: 'Пользователь с таким email уже зарегистрирован' });
+        next(
+          new ConflictError('Нет прав доступа для удаления карточек других пользователей'),
+        );
+      } else {
+        next(err);
       }
-      return res
-        .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: 'Internal Server Error' });
     });
 };
 
-const updateUser = (req, res) => {
+const updateUser = (req, res, next) => {
   const userId = req.user._id;
   const { name, about } = req.body;
   userModel
@@ -83,79 +73,74 @@ const updateUser = (req, res) => {
     )
     .then((user) => {
       if (!user) {
-        return res.status(STATUS_NOT_FOUND).send({ message: 'User Not Found' });
+        next(new NotFoundError('Пользователь не найден'));
       }
       return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'ValidationError') {
-        return res.status(STATUS_BAD_REQUEST).send({ message: 'Invalid Data' });
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      console.log(err);
-      return res
-        .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: 'Internal Server Error' });
     });
 };
 
-const updateUserAvatar = (req, res) => {
+const updateUserAvatar = (req, res, next) => {
   const userId = req.user._id;
   const { avatar } = req.body;
   userModel
     .findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return res.status(STATUS_NOT_FOUND).send({ message: 'User Not Found' });
+        next(new NotFoundError('Пользователь не найден'));
       }
       return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'ValidationError') {
-        return res.status(STATUS_BAD_REQUEST).send({ message: 'Invalid Data' });
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      console.log(err);
-      return res
-        .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: 'Internal Server Error' });
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
-  return userModel.findUserByCredentials(email, password)
+  return userModel
+    .findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, 'secret-key', {
+        expiresIn: '7d',
+      });
       res.status(STATUS_OK).send({ token });
     })
     .catch((err) => {
-      console.log(err);
-      res
-        .status(STATUS_UNAUTHORIZED)
-        .send({ message: 'Неправильные почта или пароль' });
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
     });
 };
 
-const getCurrentUserInfo = (req, res) => {
-  console.log(req.user);
+const getCurrentUserInfo = (req, res, next) => {
   const userId = req.user._id;
   userModel
     .findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(STATUS_NOT_FOUND).send({ message: 'User Not Found' });
+        next(new NotFoundError('Пользователь не найден'));
       }
       return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'CastError') {
-        return res.status(STATUS_BAD_REQUEST).send({ message: 'Incorrect ID' });
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      return res
-        .status(STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: 'Internal Server Error' });
     });
 };
 
