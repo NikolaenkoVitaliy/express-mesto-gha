@@ -8,6 +8,7 @@ const {
   STATUS_NOT_FOUND,
   STATUS_BAD_REQUEST,
   STATUS_UNAUTHORIZED,
+  STATUS_CONFLICT,
 } = require('../utils/constants');
 
 const getAllUsers = (req, res) => {
@@ -59,6 +60,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(STATUS_BAD_REQUEST).send({ message: 'Invalid Data' });
+      }
+      if (err.code === 11000) {
+        return res.status(STATUS_CONFLICT).send({ message: 'Пользователь с таким email уже зарегистрирован' });
       }
       return res
         .status(STATUS_INTERNAL_SERVER_ERROR)

@@ -3,6 +3,7 @@ const STATUS_CREATED = 201;
 const STATUS_BAD_REQUEST = 400;
 const STATUS_UNAUTHORIZED = 401;
 const STATUS_NOT_FOUND = 404;
+const STATUS_CONFLICT = 409;
 const STATUS_INTERNAL_SERVER_ERROR = 500;
 
 const regexLink = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
@@ -13,6 +14,7 @@ module.exports = {
   STATUS_BAD_REQUEST,
   STATUS_UNAUTHORIZED,
   STATUS_NOT_FOUND,
+  STATUS_CONFLICT,
   STATUS_INTERNAL_SERVER_ERROR,
   regexLink,
 };
