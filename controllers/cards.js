@@ -54,7 +54,7 @@ const deleteCard = (req, res) => {
       if (!card) {
         return res.status(STATUS_NOT_FOUND).send({ message: 'Card not found' });
       }
-      if (userId === card.owner.toString()) {
+      if (userId !== card.owner.toString()) {
         return res.status(STATUS_FORBIDDEN).send({ message: 'Разрешено удалять только свои карточки' });
       }
       return cardModel.findByIdAndDelete(cardId);
