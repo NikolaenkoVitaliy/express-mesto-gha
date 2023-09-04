@@ -111,6 +111,7 @@ const updateUserAvatar = (req, res) => {
       return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
+      console.log(err.name);
       if (err.name === 'ValidationError') {
         return res.status(STATUS_BAD_REQUEST).send({ message: 'Invalid Data' });
       }
