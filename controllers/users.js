@@ -105,13 +105,13 @@ const updateUserAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  return userModel
+  userModel
     .findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'secret-key', {
         expiresIn: '7d',
       });
-      res.status(STATUS_OK).send({ token });
+      return res.status(STATUS_OK).send({ token });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
