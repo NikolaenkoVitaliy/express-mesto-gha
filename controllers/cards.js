@@ -1,8 +1,6 @@
 const cardModel = require('../models/card');
 const { STATUS_OK, STATUS_CREATED } = require('../utils/constants');
-const BadRequestError = require('../errors/bad-request-error');
-const NotFoundError = require('../errors/not-found-error');
-const ForbiddenError = require('../errors/forbidden-error');
+const { BadRequestError, NotFoundError, ForbiddenError } = require('../errors/forbidden-error');
 
 const getAllCards = (req, res, next) => {
   cardModel
