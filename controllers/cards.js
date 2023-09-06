@@ -83,7 +83,7 @@ const removeLikeCard = (req, res, next) => {
     .findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .then((card) => {
       if (!card) {
-        next(new NotFoundError('Карточка не найдена'));
+        throw new NotFoundError('Карточка не найдена');
       }
       return res.status(STATUS_OK).send(card);
     })

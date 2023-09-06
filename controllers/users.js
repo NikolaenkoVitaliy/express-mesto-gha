@@ -5,6 +5,7 @@ const { STATUS_OK, STATUS_CREATED } = require('../utils/constants');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
+const UnauthorizedError = require('../errors/unauthorized-error');
 
 const getAllUsers = (req, res, next) => {
   userModel
@@ -111,15 +112,9 @@ const login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'secret-key', {
         expiresIn: '7d',
       });
-      return res.status(STATUS_OK).send({ token });
+      res.status(STATUS_OK).send({ token });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 const getCurrentUserInfo = (req, res, next) => {
