@@ -11,6 +11,15 @@ const { regexLink } = require('../utils/constants');
 
 routerUsers.get('/users', getAllUsers);
 routerUsers.get('/users/me', getCurrentUserInfo);
+routerUsers.get(
+  '/users/:userId',
+  celebrate({
+    params: Joi.object().keys({
+      userId: Joi.string().length(24).required(),
+    }),
+  }),
+  getUserById,
+);
 routerUsers.patch(
   '/users/me',
   celebrate({
@@ -21,15 +30,7 @@ routerUsers.patch(
   }),
   updateUser,
 );
-routerUsers.get(
-  '/users/:userId',
-  celebrate({
-    params: Joi.object().keys({
-      userId: Joi.string().length(24).required(),
-    }),
-  }),
-  getUserById,
-);
+
 routerUsers.patch(
   '/users/me/avatar',
   celebrate({

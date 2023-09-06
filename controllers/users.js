@@ -2,8 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
 const { STATUS_OK, STATUS_CREATED } = require('../utils/constants');
-const NotFoundError = require('../errors/conflict-error');
-const BadRequestError = require('../errors/conflict-error');
+const NotFoundError = require('../errors/not-found-error');
+const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
 
 const getAllUsers = (req, res, next) => {
@@ -20,17 +20,17 @@ const getUserById = (req, res, next) => {
   userModel
     .findById(userId)
     .then((user) => {
+      console.log(user);
       if (!user) {
-        next(new NotFoundError('Пользователь не найден'));
+        throw new NotFoundError('Пользователь не найден');
       }
-      return res.status(STATUS_OK).send(user);
+      res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные'));
-      } else {
-        next(err);
       }
+      next(err);
     });
 };
 
