@@ -2,7 +2,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
 const { STATUS_OK, STATUS_CREATED } = require('../utils/constants');
-const { NotFoundError, BadRequestError, ConflictError } = require('../errors/conflict-error');
+const NotFoundError = require('../errors/conflict-error');
+const BadRequestError = require('../errors/conflict-error');
+const ConflictError = require('../errors/conflict-error');
 
 const getAllUsers = (req, res, next) => {
   userModel
