@@ -5,7 +5,6 @@ const { STATUS_OK, STATUS_CREATED } = require('../utils/constants');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
-const UnauthorizedError = require('../errors/unauthorized-error');
 
 const getAllUsers = (req, res, next) => {
   userModel
@@ -21,7 +20,6 @@ const getUserById = (req, res, next) => {
   userModel
     .findById(userId)
     .then((user) => {
-      console.log(user);
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
