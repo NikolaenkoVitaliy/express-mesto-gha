@@ -34,17 +34,14 @@ const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   const userId = req.user._id;
   cardModel
-    .findById(cardId)
+    .findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Карточка не найдена'));
       } else if (userId !== card.owner.toString()) {
         next(new ForbiddenError('Разрешено удалять только свои карточки'));
       }
-      return cardModel.findByIdAndDelete(cardId);
-    })
-    .then(() => {
-      res.status(STATUS_OK).send({ message: 'Карточка была удалена' });
+      return res.status(STATUS_OK).send({ message: 'Карточка была удалена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
